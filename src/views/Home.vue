@@ -13,11 +13,17 @@
     </div> -->
     <EasyCampusNavBar />
     <ShowcaseLayout />
-    <div v-loading=loading infinite-scroll-immediate="true" v-infinite-scroll="loadMore" infinite-scroll-delay="1000" :infinite-scroll-disabled=false
-      :infinite-scroll-distance="50" class="goods-list">
-      <ProductCard v-for="(good, index) in goods" :key="goodsCount" :productTitle="good.productTitle"
-        :productPrice="good.productPrice" :wants="good.wants" :nickname="good.nickname" :isVerified="good.isVerified" />
-    </div>
+    <div
+  v-loading="loading"
+  infinite-scroll-immediate="true"
+  v-infinite-scroll="loadMore"
+  infinite-scroll-delay="1000"
+  :infinite-scroll-disabled="loading || !hasMore"
+  :infinite-scroll-distance="50"
+  class="goods-list"
+>
+  <ProductCard v-for="(good, index) in goods" :key="index"  />
+</div>
     <el-backtop :right="100" :bottom="100" />
   </div>
 </template>
@@ -30,25 +36,23 @@ const loading = ref(false);
 const hasMore = ref(true);
 const page = ref(1); // 分页页码
 
+// 逻辑部分
 const loadMore = async () => {
-  // console.log("Before loading:", loading.value);
-  // console.log("After loading:", loading.value);
-  // if (goods.length === 50) return; // 避免重复请求
+  if (loading.value || !hasMore.value) return; // 防御
   loading.value = true;
   try {
-
-
     const res = await getGoods(page.value);
-
-    // 无数据时停止加载
     if (res.data.length === 0) {
       hasMore.value = false;
       return;
     }
-
-    // 追加数据（而非覆盖）
     goods.push(...res.data);
-    page.value++; // 页码+1
+    page.value++;
+  } catch (e) {
+    // 请求失败时，停止加载，并可选弹窗提示
+    hasMore.value = false;
+    // 你可以加上 ElMessage.error('加载失败，请稍后重试');
+    ElMessage.error('加载失败，请稍后重试');
   } finally {
     loading.value = false;
   }
@@ -67,6 +71,7 @@ import EasyCampusNavBar from "@/components/Nav/EasyCampusNavBar.vue"
 import EasyCampusCategoryNav from "@/components//Nav/EasyCampusCategoryNav.vue"
 import ShowcaseLayout from "@/components/Nav/ShowcaseLayout.vue"
 import { reactive, ref } from "vue";
+import { ElMessage } from "element-plus";
 
 export default {
   name: "Home",

@@ -50,7 +50,7 @@ function onSearch() {
 
 <style scoped>
 .easycampus-header {
-  width: 100vw;
+  min-width: 100vw;
   background: #eaf3ff;
   box-sizing: border-box;
   padding: 0;

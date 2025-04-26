@@ -55,6 +55,7 @@ const cards = [
     priceList: [60, 59, 40],
     products: [{}, {}, {}]
   },
+  
   {
     theme: 'blue',
     title: '手机数码',
@@ -81,19 +82,41 @@ const cards = [
     icon: '💳',
     priceList: [15.8, 40, 534],
     products: [{}, {}, {}]
-  }
+  },
+  {
+    theme: 'pink',
+    title: '省钱卡券',
+    desc: '吃喝玩乐放心购',
+    tag: 'COUPON',
+    icon: '💳',
+    priceList: [15.8, 40, 534],
+    products: [{}, {}, {}]
+  },
+  {
+    theme: 'pink',
+    title: '省钱卡券',
+    desc: '吃喝玩乐放心购',
+    tag: 'COUPON',
+    icon: '💳',
+    priceList: [15.8, 40, 534],
+    products: [{}, {}, {}]
+  },
+  
 ];
 </script>
 
 <style scoped>
 .showcase-layout {
+  margin-top: 20px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: center;
-  background: #f6f8fa;
+  background: #ffff;
   box-sizing: border-box;
-  width: 100vw;
-  min-height: 100vh;
+  width: 1420px;
+  min-height: 360px;
   font-size: 15px;
+  border-radius: 25px;
 }
 
 /* 左侧导航：原有白底圆角阴影样式不变，仅减少数量，字体更小更紧凑 */
@@ -171,12 +194,12 @@ const cards = [
   min-width: 180px;
   height: 280px;
   border-radius: 36px;
-  background: linear-gradient(120deg, #ff9a48 0%, #ffb13a 100%);
+  background: linear-gradient(120deg, #9bb9e6 0%, #9bb9e6 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0;
-  box-shadow: 0 4px 18px #ffd8a9;
+  box-shadow: 0 4px 18px #9bb9e6;
   padding-bottom: 0;
   position: relative;
 }
@@ -233,7 +256,7 @@ const cards = [
 /* 宫格区块比例缩小、保留4宫格 */
 .showcase-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 110px);
   gap: 16px 16px;
   width: 420px;

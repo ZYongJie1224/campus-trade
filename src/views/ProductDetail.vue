@@ -1,16 +1,7 @@
 <template>
     <div class="product-detail">
       <!-- 顶部横幅 -->
-      <header class="header">
-        <div class="logo">闲鱼</div>
-        <div class="search-bar">
-          <input type="text" placeholder="电动车"/>
-          <button>搜索</button>
-        </div>
-        <div class="user-menu">
-          <span class="profile">闲鱼号</span>
-        </div>
-      </header>
+      <Search />
   
       <!-- 主内容区域 -->
       <main class="main-content">
@@ -66,6 +57,7 @@
   
   <script setup>
   import { ref } from 'vue'
+  import Search from '@/components/Search.vue'
   
   const images = [
     'https://example.com/img1.jpg',
