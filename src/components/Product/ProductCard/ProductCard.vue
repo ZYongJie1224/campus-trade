@@ -1,4 +1,4 @@
-<template #isVerified="{ isVerified }">
+<template>
   <el-card
     class="good-card"
     shadow="hover"
@@ -6,64 +6,41 @@
   >
     <el-image
       class="good-img"
-      :src="require('@/assets/logo.png')"
+      :src="productMainImg || require('@/assets/logo.png')"
       alt=""
     ></el-image>
     <div class="good-content">
       <div class="title">
-        <el-text class="good-title" truncated line-clamp="2"
-          ><el-image
+        <el-text class="good-title" truncated line-clamp="2">
+          <el-image
             class="is-home"
-            :src="require('@/assets/logo.png')"
-          ></el-image
-          >{{productTitle}}</el-text
-        >
+            :src="productMainImg || require('@/assets/logo.png')"
+          ></el-image>
+          {{ productTitle }}
+        </el-text>
       </div>
-      <div class="tags">tag1|tag2</div>
+      <div class="tags">{{ categoryName }}</div>
       <div class="good-price">
         <span class="mark">¥</span>
-        <span class="price">{{productPrice}}</span>
-        <span class="want">{{wants}}人想要</span>
+        <span class="price">{{ productPrice }}</span>
+        <span class="want">{{ wants }}人想要</span>
       </div>
-      <div class="upload-user" >
-        <el-avatar shape="circle" size="small"></el-avatar>
+      <div class="upload-user">
+        <el-avatar shape="circle" size="small" :src="avatarUrl"></el-avatar>
         <span class="user-name">{{ nickname }}</span>
-        <el-tag  class="is-q" type="success"  v-if="isVerified==1">已认证用户</el-tag>
+        <el-tag class="is-q" type="success" v-if="isVerified == 1">已认证用户</el-tag>
         <el-tag class="is-q" type="primary" v-else>普通用户</el-tag>
       </div>
     </div>
   </el-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { defineProps } from 'vue'
+import { ProductDetailVO } from './config';
 
-export default {
-  props: {
-    productTitle: {
-      type: String,
-      required: true, // 如果必填
-    },
-    productPrice: {
-      type: Number,
-      default: 0, // 默认值
-    },
-    wants: {
-      type: Number,
-      default: 0,
-    },
-    nickname: {
-      type: String,
-      default: "匿名用户",
-    },
-    isVerified: {
-      type: Number,
-      default: 0,
-    },
-  },
-};
-
+const props = defineProps<ProductDetailVO>()
 </script>
-
 <style>
 .is-q {
   margin-right: 15px;
