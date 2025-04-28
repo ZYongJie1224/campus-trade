@@ -20,7 +20,17 @@
         </div>
       </div>
       <div class="user-action">
-        <span class="action-item">
+        <UserAvatarCard
+          v-if="user"
+          :user="user"
+          :statistics="statistics"
+          @logout="onLogout"
+        />
+        <span
+          v-else
+          class="action-item"
+          @click="showLogin = true"
+        >
           <svg class="user-icon" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="8" r="4" stroke="#2446a6" stroke-width="2"/>
             <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="#2446a6" stroke-width="2"/>
@@ -36,21 +46,77 @@
         </span>
       </div>
     </div>
+    <Login
+      v-model="showLogin"
+      :closable="true"
+      @login-success="onLoginSuccess"
+      @login-cancel="onLoginCancel"
+    />
   </header>
 </template>
 
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import Login from "./Login/Login.vue";
+import UserAvatarCard from "./UserAvatarCard.vue";
+
 const searchText = ref("");
+const showLogin = ref(false);
+
+// 模拟用户数据和统计数据（实际可用localStorage存储或登录成功后赋值）
+const user = ref<any>(null);
+const statistics = ref<any>(null);
+
 function onSearch() {
-  // 搜索逻辑
+  if (!user.value) {
+    showLogin.value = true;
+    return;
+  }
   alert(`搜索内容：${searchText.value}`);
 }
+
+function onLoginSuccess() {
+  // 假设登录后你会存 user/user_statistics 到localStorage
+  // 这里模拟一下数据
+  user.value = {
+    user_id: 1,
+    nickname: "ZyongJieA",
+    avatar_url: "https://q1.qlogo.cn/g?b=qq&nk=2290031983&s=100",
+    fans_count: 6,
+    follow_count: 0,
+  };
+  statistics.value = {
+    buyCount: 13,
+    sellCount: 25,
+    favCount: 9,
+  };
+  showLogin.value = false;
+  // 真实项目可在这里 localStorage.setItem('user', JSON.stringify(...));
+}
+
+function onLoginCancel() {}
+
+function onLogout() {
+  user.value = null;
+  statistics.value = null;
+  // 真实项目应清除localStorage
+}
+
+onMounted(() => {
+  // 页面刷新时自动读取本地登录状态
+  try {
+    const userStr = localStorage.getItem("user");
+    const statStr = localStorage.getItem("user_statistics");
+    user.value = userStr ? JSON.parse(userStr) : null;
+    statistics.value = statStr ? JSON.parse(statStr) : null;
+  } catch (e) {}
+});
 </script>
 
 <style scoped>
+/* 原样式不变，见你上一条 */
 .easycampus-header {
-  min-width: 100vw;
+  min-width: 99vw;
   background: #eaf3ff;
   box-sizing: border-box;
   padding: 0;
@@ -67,7 +133,7 @@ function onSearch() {
   align-items: center;
   box-sizing: border-box;
   padding: 0 48px;
-  height: 84px; /* 高度微调 */
+  height: 84px;
   border-radius: 0 0 18px 18px;
   gap: 36px;
   position: relative;
@@ -89,7 +155,7 @@ function onSearch() {
 .search-area-outer {
   flex: 1 1 auto;
   display: flex;
-  justify-content: center; /* 搜索框居中 */
+  justify-content: center;
 }
 
 .search-area {
@@ -99,7 +165,7 @@ function onSearch() {
   border: 2px solid #2446a6;
   border-radius: 36px;
   box-sizing: border-box;
-  height: 50px; /* 搜索框高度微调 */
+  height: 50px;
   min-width: 500px;
   max-width: 800px;
   width: 70%;
@@ -162,7 +228,7 @@ function onSearch() {
   align-items: center;
   gap: 20px;
   color: #2446a6;
-  font-size: 15px; /* 登录订单字体减小 */
+  font-size: 15px;
   font-weight: 500;
   margin-left: auto;
   border-radius: 12px;
@@ -193,7 +259,7 @@ function onSearch() {
   .header-inner {
     padding: 0 10px;
     min-width: 0;
-    height: 76px; /* 响应式高度调整 */
+    height: 76px;
   }
   .search-area {
     min-width: 120px;

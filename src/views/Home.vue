@@ -11,18 +11,22 @@
       :infinite-scroll-distance="50"
       class="goods-list"
     >
-    <template v-if="goods.length === 0 && loading">
-    <SkeletonCard v-for="n in 20" :key="'skeleton-' + n" />
-  </template>
-  <template v-else>
-    <ProductCard
-      v-for="(good, index) in goods"
-      :key="index"
-      v-bind="good"
-    />
-    <!-- 非首屏加载更多时，可以加个小loading提示，不用骨架屏 -->
-    <div v-if="loading" class="list-loading-more">加载中...</div>
-  </template>
+      <template v-if="goods.length === 0 && loading">
+        <SkeletonCard v-for="n in 20" :key="'skeleton-' + n" />
+      </template>
+      <template v-else>
+        <template v-for="(good, index) in goods" :key="index">
+          <!-- 若对应商品卡片未加载图片，则显示骨架屏，否则显示商品卡片 -->
+          <SkeletonCard v-if="!cardLoaded[index]" />
+          <ProductCard
+            v-else
+            v-bind="good"
+            @loaded="() => cardLoaded[index] = true"
+          />
+        </template>
+        <!-- 非首屏加载更多时，可以加个小loading提示，不用骨架屏 -->
+        <div v-if="loading" class="list-loading-more">加载中...</div>
+      </template>
     </div>
     <el-backtop :right="100" :bottom="100" />
   </div>
@@ -37,10 +41,11 @@ import ShowcaseLayout from "@/components/Nav/ShowcaseLayout.vue";
 import { reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import type { ProductDetailVO } from "@/components/Product/ProductCard/config";
-import SkeletonCard from "@/components/Product/ProductCard/SkeletonCard.vue"; // 骨架屏组件见下方
-
+import SkeletonCard from "@/components/Product/ProductCard/SkeletonCard.vue";
 
 const goods = reactive<ProductDetailVO[]>([]);
+// 新增：每个卡片的图片加载状态（下标与goods对应）
+const cardLoaded = ref<boolean[]>([]);
 
 const loading = ref(false);
 const hasMore = ref(true);
@@ -56,6 +61,8 @@ const loadMore = async () => {
       return;
     }
     goods.push(...res.data);
+    // 新增的卡片初始化为未加载（false）
+    cardLoaded.value.push(...Array(res.data.length).fill(false));
     page.value++;
   } catch (e) {
     hasMore.value = false;
@@ -86,59 +93,23 @@ const loadMore = async () => {
 }
 .home {
   height: auto;
-  /* overflow: auto; */
   width: 100%;
   min-width: 1296px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* 水平居中子元素 */
   background-color: #f5f5f5;
-  /* 添加背景色 */
 }
-.images{
-  height: 350px;
-  width: 1396px;
-}
-.nav {
-  /* display: flex; */
-  justify-content: center;
-  align-items: center;
-  /* 垂直居中 */
-  padding-top: 20px;
-  height: 350px;
-  width: 1396px;
-  background-color: #ffffff;
-  /* 添加背景色 */
-  min-width: 1396px;
-  margin: 20px auto;
-  /* 水平居中，并添加间距 */
-  border-radius: 12px;
-  /* 边框圆角 */
-  padding: 20px;
-  margin-top: 20px;
-  /* 添加间距 */
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
-  /* 边框阴影 */
-}
-
 .goods-list {
   height: auto;
   justify-content: center;
   flex-wrap: wrap;
   align-content: center;
   display: flex;
-  /* justify-content: center; */
-  /* overflow: auto; */
   width: 1369px;
   padding: 20px;
   background-color: #ffffff;
-  /* 添加背景色 */
   min-width: 1396px;
   border-radius: 12px;
-  /* 边框圆角 */
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
-  /* 边框阴影 */
-  /* margin-top: 20px; 添加间距 */
 }
 </style>

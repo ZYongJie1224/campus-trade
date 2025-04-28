@@ -1,4 +1,5 @@
 export interface ProductDetailVO {
+    productId:number,
     productName: string;
     productTitle: string;
     productPrice: number | string;
