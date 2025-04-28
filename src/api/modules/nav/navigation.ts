@@ -9,7 +9,7 @@ export const fetchMainNavigation = () => {
   };
   export const fetchCategoryNavigation = () => {
     return axios({
-      url: "/nav/main",
+      url: "/nav/categories",
       method: "get"
     });
   };

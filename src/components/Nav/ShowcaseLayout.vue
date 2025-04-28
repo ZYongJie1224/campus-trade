@@ -1,11 +1,14 @@
+```vue
 <template>
   <div class="showcase-layout">
-    <!-- 左侧导航，保留原有白底圆角阴影样式，仅减少为8项，字体按紧凑风格 -->
+    <!-- 左侧导航（动态获取分类，只显示前8项） -->
     <aside class="category-nav">
       <ul>
-        <li v-for="c in categories" :key="c.name">
-          <span class="cat-icon">{{ c.icon }}</span>
-          <span class="cat-name">{{ c.name }}</span>
+        <li v-for="c in categories" :key="c.navId">
+          <span class="cat-icon">
+            <i :class="c.navIcon"></i>
+          </span>
+          <span class="cat-name">{{ c.navName }}</span>
         </li>
       </ul>
     </aside>
@@ -33,17 +36,47 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import ShowcaseCard from './ShowcaseCard.vue'
+// 假设你有这个API方法，返回后端分类
+import { fetchCategoryNavigation } from '@/api/modules/nav/navigation'
 
-// 只保留8项导航
-const categories = [
-  { icon: "📱", name: "手机 / 数码 / 电脑" },
-  { icon: "👚", name: "服饰 / 箱包 / 运动" },
-  { icon: "🎫", name: "技能 / 卡券 / 潮玩" },
-  { icon: "🎁", name: "礼品 / 文玩 / 珠宝" },
-  { icon: "🍔", name: "食品 / 宠物 / 花卉" }
-];
+interface CategoryNav {
+  navId: number
+  navName: string
+  navIcon: string
+  navRoute: string
+  parentId: number
+  orderIndex: number
+  isActive: boolean
+}
+
+const categories = ref<CategoryNav[]>([])
+
+onMounted(async () => {
+  try {
+    // 推荐这样写，兼容 { data: [...] } 或直接返回数组
+    const res = await fetchCategoryNavigation()
+    const list = Array.isArray(res) ? res : res?.data
+    categories.value = Array.isArray(list)
+      ? list.filter((cat: CategoryNav) => cat.isActive)
+            .sort((a: CategoryNav, b: CategoryNav) => a.orderIndex - b.orderIndex)
+            .slice(0, 8)
+      : []
+  } catch (e) {
+    console.log(e)
+    // 兜底静态数据
+    categories.value = [
+      { navId: 1, navName: "手机 / 数码 / 电脑", navIcon: "i-campus-mobile", navRoute: "", parentId: 0, orderIndex: 1, isActive: true },
+      { navId: 2, navName: "服饰 / 箱包 / 运动", navIcon: "i-campus-clothes", navRoute: "", parentId: 0, orderIndex: 2, isActive: true },
+      { navId: 3, navName: "技能 / 卡券 / 潮玩", navIcon: "i-campus-coupon", navRoute: "", parentId: 0, orderIndex: 3, isActive: true },
+      { navId: 4, navName: "礼品 / 文玩 / 珠宝", navIcon: "i-campus-toy", navRoute: "", parentId: 0, orderIndex: 4, isActive: true },
+      { navId: 6, navName: "11 / 美妆 / 个护", navIcon: "i-campus-baby", navRoute: "", parentId: 0, orderIndex: 6, isActive: true },
+      { navId: 8, navName: "图书 / 游戏 / 音像", navIcon: "i-campus-book", navRoute: "", parentId: 0, orderIndex: 8, isActive: true }
+    ]
+  }
+})
 
 const cards = [
   {
@@ -55,7 +88,6 @@ const cards = [
     priceList: [60, 59, 40],
     products: [{}, {}, {}]
   },
-  
   {
     theme: 'blue',
     title: '手机数码',
@@ -100,9 +132,8 @@ const cards = [
     icon: '💳',
     priceList: [15.8, 40, 534],
     products: [{}, {}, {}]
-  },
-  
-];
+  }
+]
 </script>
 
 <style scoped>
@@ -161,6 +192,8 @@ const cards = [
 .cat-icon {
   font-size: 22px;
   margin-right: 10px;
+  display: flex;
+  align-items: center;
 }
 .cat-name {
   flex: 1 1 0;
@@ -168,6 +201,18 @@ const cards = [
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* 图标伪类 */
+.i-campus-mobile::before { content: "📱"; }
+.i-campus-clothes::before { content: "👚"; }
+.i-campus-coupon::before { content: "🎫"; }
+.i-campus-baby::before { content: "🍼"; }
+.i-campus-home::before { content: "🏠"; }
+.i-campus-toy::before { content: "💎"; }
+.i-campus-food::before { content: "🍔"; }
+.i-campus-book::before { content: "📚"; }
+.i-campus-car::before { content: "🚗"; }
+.i-campus-metal::before { content: "🔧"; }
 
 /* 内容区整体比例缩小 */
 .showcase-content {
@@ -265,3 +310,4 @@ const cards = [
   align-items: stretch;
 }
 </style>
+```

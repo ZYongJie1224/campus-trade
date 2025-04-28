@@ -33,8 +33,8 @@ const handleNavClick = (item) => {
 onMounted(async () => {
   try {
     const { data } = await fetchMainNavigation();
-    navList.value = data.data;
-    console.log(data.data)
+    navList.value = data;
+    console.log(data)
   } catch (e) {
     // 失败可提示，也可用默认
     navList.value = [
@@ -52,7 +52,7 @@ onMounted(async () => {
 
 <style scoped>
 .easycampus-nav-bar {
-  width: 100vw;
+  width: 99vw;
   background: #eaf3ff;
   display: flex;
   justify-content: center;
