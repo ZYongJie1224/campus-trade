@@ -3,26 +3,19 @@
     <Search />
     <EasyCampusNavBar />
     <ShowcaseLayout />
-    <div
-      infinite-scroll-immediate="true"
-      v-infinite-scroll="loadMore"
-      infinite-scroll-delay="1000"
-      :infinite-scroll-disabled="loading || !hasMore"
-      :infinite-scroll-distance="50"
-      class="goods-list"
-    >
+    <div infinite-scroll-immediate="true" v-infinite-scroll="loadMore" infinite-scroll-delay="1000"
+      :infinite-scroll-disabled="loading || !hasMore" :infinite-scroll-distance="50" class="goods-list">
       <template v-if="goods.length === 0 && loading">
         <SkeletonCard v-for="n in 20" :key="'skeleton-' + n" />
       </template>
       <template v-else>
-        <template v-for="(good, index) in goods" :key="index">
-          <!-- 若对应商品卡片未加载图片，则显示骨架屏，否则显示商品卡片 -->
-          <SkeletonCard v-if="!cardLoaded[index]" />
-          <ProductCard
-            v-else
-            v-bind="good"
-            @loaded="() => cardLoaded[index] = true"
-          />
+        <template v-for="(good, index) in goods" :key="good.productId">
+          <div style="position:relative;">
+            <SkeletonCard v-show="!cardLoaded[index]" />
+            <ProductCard @click="goToDetail(good.productId)" v-show="cardLoaded[index]" v-bind="good" @loaded="() => {
+              cardLoaded[index] = true;
+            }" />
+          </div>
         </template>
         <!-- 非首屏加载更多时，可以加个小loading提示，不用骨架屏 -->
         <div v-if="loading" class="list-loading-more">加载中...</div>
@@ -30,6 +23,7 @@
     </div>
     <el-backtop :right="100" :bottom="100" />
   </div>
+  <SideBarButtons />
 </template>
 
 <script lang="ts" setup>
@@ -42,6 +36,8 @@ import { reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import type { ProductDetailVO } from "@/components/Product/ProductCard/config";
 import SkeletonCard from "@/components/Product/ProductCard/SkeletonCard.vue";
+import router from "@/router";
+import SideBarButtons from "@/components/Nav/SideBarButtons.vue";
 
 const goods = reactive<ProductDetailVO[]>([]);
 // 新增：每个卡片的图片加载状态（下标与goods对应）
@@ -50,7 +46,9 @@ const cardLoaded = ref<boolean[]>([]);
 const loading = ref(false);
 const hasMore = ref(true);
 const page = ref(1);
-
+function goToDetail(productId: string | number) {
+  router.push({ name: "ProductDetail", params: { id: productId } });
+}
 const loadMore = async () => {
   if (loading.value || !hasMore.value) return;
   loading.value = true;
@@ -68,6 +66,7 @@ const loadMore = async () => {
     hasMore.value = false;
     ElMessage.error('加载失败，请稍后重试');
   } finally {
+    console.log(cardLoaded);
     loading.value = false;
   }
 };
@@ -88,9 +87,15 @@ const loadMore = async () => {
 }
 
 @keyframes blink {
-  0% { opacity: 1; }
-  100% { opacity: 0.5; }
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.5;
+  }
 }
+
 .home {
   height: auto;
   width: 100%;
@@ -100,6 +105,7 @@ const loadMore = async () => {
   align-items: center;
   background-color: #f5f5f5;
 }
+
 .goods-list {
   height: auto;
   justify-content: center;
@@ -110,6 +116,6 @@ const loadMore = async () => {
   padding: 20px;
   background-color: #ffffff;
   min-width: 1396px;
-  border-radius: 12px;
+  border-radius: 20px;
 }
 </style>

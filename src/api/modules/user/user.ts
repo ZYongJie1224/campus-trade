@@ -7,3 +7,10 @@ export const loginAPI = (data: any) => {
       data
     });
   };
+
+  export const getMe = () =>{
+    return axios({
+      url: "/user/me",
+      method: "get"
+    });
+  }

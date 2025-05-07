@@ -78,19 +78,27 @@ function onSearch() {
 function onLoginSuccess() {
   // 假设登录后你会存 user/user_statistics 到localStorage
   // 这里模拟一下数据
-  user.value = {
-    user_id: 1,
-    nickname: "ZyongJieA",
-    avatar_url: "https://q1.qlogo.cn/g?b=qq&nk=2290031983&s=100",
-    fans_count: 6,
-    follow_count: 0,
-  };
-  statistics.value = {
-    buyCount: 13,
-    sellCount: 25,
-    favCount: 9,
-  };
+
+  const userStr = localStorage.getItem('user');
+  const statStr = localStorage.getItem('user_statistics');
+  
+  user.value = userStr ? JSON.parse(userStr) : null;
+  statistics.value = statStr ? JSON.parse(statStr) : null;
+  console.log(user.followCount)
   showLogin.value = false;
+
+  // user.value = {
+  //   user_id: 1,
+  //   nickname: "ZyongJieA",
+  //   avatar_url: "https://q1.qlogo.cn/g?b=qq&nk=2290031983&s=100",
+  //   fans_count: 6,
+  //   follow_count: 0,
+  // };
+  // statistics.value = {
+  //   buyCount: 13,
+  //   sellCount: 25,
+  //   favCount: 9,
+  // };
   // 真实项目可在这里 localStorage.setItem('user', JSON.stringify(...));
 }
 
@@ -99,16 +107,21 @@ function onLoginCancel() {}
 function onLogout() {
   user.value = null;
   statistics.value = null;
+  localStorage.removeItem("user");
+  localStorage.removeItem("user_statistics");
+  localStorage.removeItem("token");
   // 真实项目应清除localStorage
 }
 
 onMounted(() => {
   // 页面刷新时自动读取本地登录状态
   try {
-    const userStr = localStorage.getItem("user");
-    const statStr = localStorage.getItem("user_statistics");
-    user.value = userStr ? JSON.parse(userStr) : null;
-    statistics.value = statStr ? JSON.parse(statStr) : null;
+    const userStr = localStorage.getItem('user');
+  const statStr = localStorage.getItem('user_statistics');
+  
+  user.value = userStr ? JSON.parse(userStr) : null;
+  statistics.value = statStr ? JSON.parse(statStr) : null;
+  console.log(user.fansCount)
   } catch (e) {}
 });
 </script>

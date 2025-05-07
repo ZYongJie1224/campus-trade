@@ -10,16 +10,18 @@ service.interceptors.request.use(
     // 发送请求之前做什么
     // 获取token鉴权
     // let userInfo: any = {};
-    // if (localStorage.getItem("user-info")) {
-    //   userInfo = JSON.parse(localStorage.getItem("user-info") as string);
-    // }
-    // if (userInfo?.token) {
-    //   // 有token，在请求头中携带token
-    //   config.headers.Authorization = userInfo.token;
-    // }
+    let token;
+    // console.log(localStorage.getItem("token"))
+    if (localStorage.getItem("token")!=undefined) {
+      token = localStorage.getItem("token");
+      config.headers.Authorization = token;
+      return config;
+    }
     return config;
+
   },
   function (error: any) {
+    console.log(error)
     // 请求错误
     return Promise.reject(error);
   }

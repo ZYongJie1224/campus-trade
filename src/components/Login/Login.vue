@@ -59,7 +59,7 @@
             </template>
             <template v-else>
               <div class="field phone-field">
-                <span class="phone-prefix">+86</span>
+                <!-- <span class="phone-prefix">+86</span> -->
                 <input
                   v-model="phone"
                   type="text"
@@ -96,70 +96,111 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, defineProps, defineEmits, watch, onUnmounted } from 'vue';
-  
-  const props = defineProps<{ modelValue: boolean; closable?: boolean }>();
-  const emit = defineEmits(['update:modelValue', 'login-success', 'login-cancel']);
-  
-  const visible = ref(props.modelValue);
-  watch(() => props.modelValue, v => (visible.value = v));
-  watch(visible, v => emit('update:modelValue', v));
-  
-  const loginType = ref<'sms' | 'password'>('sms');
-  const phone = ref('');
-  const code = ref('');
-  const password = ref('');
-  const errorMsg = ref('');
-  const codeCountdown = ref(0);
-  let timer: any = null;
-  
-  function getCode() {
-    if (!/^1[3-9]\d{9}$/.test(phone.value)) {
-      errorMsg.value = '请输入正确的手机号';
-      return;
-    }
-    errorMsg.value = '';
-    codeCountdown.value = 60;
-    timer = setInterval(() => {
-      codeCountdown.value--;
-      if (codeCountdown.value <= 0) clearInterval(timer);
-    }, 1000);
+import { ref, defineProps, defineEmits, watch, onUnmounted } from 'vue';
+// import { loginAPI, getMe } from '@/'; // 这里假设loginAPI和getMe已正确封装
+import {loginAPI} from '@/api/modules/user/user';
+import {getMe} from '@/api/modules/user/user';
+
+import { ElMessage } from 'element-plus';
+
+const props = defineProps<{ modelValue: boolean; closable?: boolean }>();
+const emit = defineEmits(['update:modelValue', 'login-success', 'login-cancel']);
+
+const visible = ref(props.modelValue);
+watch(() => props.modelValue, v => (visible.value = v));
+watch(visible, v => emit('update:modelValue', v));
+
+const loginType = ref<'sms' | 'password'>('sms');
+const phone = ref('');
+const code = ref('');
+const password = ref('');
+const errorMsg = ref('');
+const codeCountdown = ref(0);
+let timer: any = null;
+
+function getCode() {
+  if (!/^1[3-9]\d{9}$/.test(phone.value)) {
+    errorMsg.value = '请输入正确的手机号';
+    return;
   }
-  
-  function handleLogin() {
-    errorMsg.value = '';
+  errorMsg.value = '';
+  codeCountdown.value = 60;
+  timer = setInterval(() => {
+    codeCountdown.value--;
+    if (codeCountdown.value <= 0) clearInterval(timer);
+  }, 1000);
+}
+
+async function handleLogin() {
+  errorMsg.value = '';
+
+  let params: any = {};
+  if (loginType.value === 'sms') {
     if (!/^1[3-9]\d{9}$/.test(phone.value)) {
-      errorMsg.value = '请输入正确的手机号';
+    errorMsg.value = '请输入正确的手机号';
+    return;
+  }
+    if (!code.value) {
+      errorMsg.value = '请输入验证码';
       return;
     }
-    if (loginType.value === 'sms') {
-      if (!code.value) {
-        errorMsg.value = '请输入验证码';
-        return;
+    params = {
+      phone: phone.value,
+      code: code.value,
+      type: 'sms'
+    };
+  } else {
+    if (!password.value) {
+      errorMsg.value = '请输入密码';
+      return;
+    }
+    params = {
+      username :phone.value,
+      password: password.value,
+      type: 'password'
+    };
+  }
+
+  try {
+    // 调用后端登录接口
+    const res = await loginAPI(params);
+    if (res.data && res.code === 200) {
+      // 假设后端返回token在res.data.data.token
+      console.log('token保存',res.data.token)
+      localStorage.setItem('token',res.data.token);
+
+      // 登录成功后拉取个人信息
+      const meRes = await getMe();
+      if (meRes.data && meRes.code === 200) {
+        console.log(meRes.code)
+        localStorage.setItem('user', JSON.stringify(meRes.data.user));
+        localStorage.setItem('user_statistics', JSON.stringify(meRes.data.statistics));
+        // localStorage.setItem('token', JSON.stringify(meRes.data.token));
+        emit('login-success', meRes.data.user,meRes.data.statistics);
+        visible.value = false;
+        ElMessage.success('登录成功');
+      } else {
+        errorMsg.value = meRes.data?.msg || '获取用户信息失败';
       }
-      localStorage.setItem('user', JSON.stringify({ phone: phone.value }));
-      emit('login-success', { phone: phone.value });
-      visible.value = false;
     } else {
-      if (!password.value) {
-        errorMsg.value = '请输入密码';
-        return;
-      }
-      localStorage.setItem('user', JSON.stringify({ phone: phone.value }));
-      emit('login-success', { phone: phone.value });
-      visible.value = false;
+      errorMsg.value = res.data?.msg || '登录失败';
     }
+  } catch (e: any) {
+    console.log(e);
+    
+    errorMsg.value = e?.response?.data?.msg || '登录异常，请重试';
   }
-  
-  function onClose() {
-    emit('login-cancel');
-    visible.value = false;
-  }
-  
-//   onUnmounted(() => {
-//     if (timer) clearInterval(timer);
-//   });
-  </script>
+}
+
+function onClose() {
+  emit('login-cancel');
+  visible.value = false;
+}
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer);
+});
+</script>
   
   <style scoped>
   .custom-login-dialog :deep(.el-dialog__body) {

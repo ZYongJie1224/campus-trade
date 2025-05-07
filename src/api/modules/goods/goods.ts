@@ -8,3 +8,30 @@ export const getGoods = (data:any) => {
       data
     });
   };
+
+  export const uploadProduct = (data:any) => {
+    return axios({
+      url: "/products/uploadProduct",
+      method: "post",
+      data
+    });
+  };
+  export const getCategories = () => {
+    return axios({
+      url: "/categories",
+      method: "get"
+    });
+  };
+// 获取商品详情（id为商品id）
+export const getProductDetail = (id: number | string) => {
+  return axios({
+    url: `/products/${id}`,
+    method: 'get'
+  })
+}
+export const getProductImgs = (id: number | string) => {
+  return axios({
+    url: `/product-imgs/${id}`,
+    method: 'get'
+  })
+}

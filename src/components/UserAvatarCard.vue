@@ -1,7 +1,7 @@
 <!-- UserAvatarCard.vue -->
 <template>
     <div class="user-avatar-hover" @mouseenter="showCard = true" @mouseleave="showCard = false">
-      <img :src="user.avatar_url || defaultAvatar" class="avatar" />
+      <img :src="user.avatarUrl || defaultAvatar" class="avatar" />
       <span class="nickname">{{ user.nickname }}</span>
       <transition name="fade">
         <div
@@ -11,15 +11,15 @@
           @mouseleave="showCard = false"
         >
           <div class="card-header">
-            <img :src="user.avatar_url || defaultAvatar" class="avatar-big" />
+            <img :src="user.avatarUrl || defaultAvatar" class="avatar-big" />
             <div class="nickname-row">
               <span class="nickname-big">{{ user.nickname }}</span>
               <span class="id">ID: {{ user.user_id }}</span>
             </div>
           </div>
           <div class="card-row">
-            <span>{{ user.fans_count }} 粉丝</span>
-            <span>{{ user.follow_count }} 关注</span>
+            <span>{{ statistics.fansCount }} 粉丝</span>
+            <span>{{ statistics.followCount }} 关注</span>
           </div>
           <div class="card-actions">
             <div class="action-row" @click="goto('buy')">
@@ -33,6 +33,10 @@
             <div class="action-row" @click="goto('fav')">
               <span>我的收藏</span>
               <span>{{ statistics.favCount }}</span>
+            </div>
+            <div class="action-row" @click="goto('myinfo')">
+              <span>个人信息</span>
+              <!-- <span>{{ statistics.favCount }}</span> -->
             </div>
           </div>
           <div class="card-bottom">
@@ -52,9 +56,9 @@
   });
   const emit = defineEmits(["logout"]);
   const showCard = ref(false);
-  const defaultAvatar = "https://img1.baidu.com/it/u=4202135782,2291501801&fm=253&fmt=auto&app=138&f=JPEG?w=300&h=300";
+  const defaultAvatar = "https://www.gravatar.com/avatar/?d=mp&s=300";
   
-  function goto(type: 'buy' | 'sell' | 'fav') {
+  function goto(type: 'buy' | 'sell' | 'fav' | 'myinfo') {
     alert('跳转到“' + (type === 'buy' ? '买到的' : type === 'sell' ? '卖出的' : '收藏') + '”页面');
   }
   function onLogout() {

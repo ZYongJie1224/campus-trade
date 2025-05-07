@@ -1,21 +1,18 @@
 <template>
-  <el-card
-    class="good-card"
-    shadow="hover"
-    style="border-radius: 25px; border: 0px"
-  >
+  <el-card class="good-card card-hover-pointer"  shadow="hover" style="border-radius: 25px; border: 0px">
+    <!-- 只对主图监听 @load 和 @success，不要用 @onSuccess -->
     <el-image
       class="good-img"
-      :src="productMainImg || require('@/assets/logo.png')"
+      :src="productMainImg "
       alt=""
-    ></el-image>
+      @load="$emit('loaded',console.log('加载中'))"
+
+    />
     <div class="good-content">
       <div class="title">
         <el-text class="good-title" truncated line-clamp="2">
-          <el-image
-            class="is-home"
-            :src="productMainImg || require('@/assets/logo.png')"
-          ></el-image>
+          <!-- 小图不用触发 loaded -->
+          <el-image class="is-home" :src="productMainImg || require('@/assets/logo.png')" />
           {{ productTitle }}
         </el-text>
       </div>
@@ -42,6 +39,9 @@ import { ProductDetailVO } from './config';
 const props = defineProps<ProductDetailVO>()
 </script>
 <style>
+.good-card:hover {
+  cursor: pointer;
+}
 .is-q {
   margin-right: 15px;
   margin-left: auto;
@@ -50,43 +50,52 @@ const props = defineProps<ProductDetailVO>()
   font-size: 15px;
   padding: 3px 0 0 5px;
 }
+
 .user-name {
   color: #1f1f1f;
   font-size: 15px;
   padding: 3px 0 0 5px;
 }
+
 .upload-user {
   display: flex;
   padding: 5px 0 0 5px;
 }
+
 .want {
   font-size: 10px;
   padding: 0 0 0 10px;
 }
+
 .price {
   color: #ff4f24;
   font-size: 30px;
   font-weight: bold;
   padding: 0 0 0 5px;
 }
+
 .mark {
   color: #ff4f24;
   font-size: 20px;
   font-weight: bold;
 }
+
 .good-price {
   text-align: left;
   padding: 15px 0px 0px 5px;
 }
+
 .tags {
   text-align: left;
   color: #606266;
   padding: 5px 0px 0px 5px;
 }
+
 .is-home {
   height: 20px;
   width: 40px;
 }
+
 .el-text {
   text-overflow: ellipsis !important;
   font-size: 20px !important;
@@ -97,33 +106,38 @@ const props = defineProps<ProductDetailVO>()
   /* height: 100px !important; */
   word-wrap: break-word !important;
 }
+
 .good-title {
   /* height: 100px !important; */
-  /* min-height: 100px; */
+  min-height: 50px;
   text-align: left;
   /* display: inline-block; */
   width: 240px;
   padding: 5px 0px 5px 5px !important;
   /* white-space: normal; */
 }
+
 .good-card {
   display: flex;
   margin: 10px;
   width: 248px;
-  height: 418px;
+  height: 425px;
   border-radius: 25px;
   flex-direction: column;
 }
+
 .good-img {
   padding: 0px 2px 0px 2px;
   border-radius: 25px;
   height: 240px;
   height: 240px;
 }
+
 .good-content {
   flex-direction: column;
   display: flex;
 }
+
 .title {
   text-overflow: ellipsis;
   /* height: 100px; */
