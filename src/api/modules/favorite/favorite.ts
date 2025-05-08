@@ -10,7 +10,7 @@ export const addFavorite = (productId: number | string) => {
 export const checkFavorite = (productId: number | string) => {
     return axios({
       url: `/favorite/isFavorited`,
-      method: 'post',
+      method: 'get',
       params: { productId }
     })
   }
