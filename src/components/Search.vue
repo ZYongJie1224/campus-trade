@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="user-action">
-        <UserAvatarCard v-if="user" :user="user" :statistics="statistics" @logout="onLogout" />
+        <UserAvatarCard v-if="user" :user="user" :statistics="statistics" @logout="onLogout"   />
         <template v-else>
           <span class="action-item" @click="showLogin = true">
             <svg class="user-icon" viewBox="0 0 24 24" fill="none">
@@ -63,6 +63,7 @@ const showRegister = ref(false);
 const user = ref<any>(null);
 const statistics = ref<any>(null);
 const router = useRouter();
+
 function userCenter(){
   router.push("/UserCenter")
 }

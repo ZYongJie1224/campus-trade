@@ -51,6 +51,8 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/UserCenter.vue')
   },
 
+
+
 ]
 
 const router = createRouter({

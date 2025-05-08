@@ -19,9 +19,9 @@ export const getSellOrders = (tab: string) => {
 }
 
 // 获取收藏列表
-export const getFavList = () => {
+export const getFavoriteList = () => {
   return axios({
-    url: '/user/favorites',
+    url: '/favorite/list',
     method: 'get'
   })
 }

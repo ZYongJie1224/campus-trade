@@ -14,7 +14,7 @@
             <img :src="user.avatarUrl || defaultAvatar" class="avatar-big" />
             <div class="nickname-row">
               <span class="nickname-big">{{ user.nickname }}</span>
-              <span class="id">ID: {{ user.user_id }}</span>
+              <span class="id">ID: {{ user.userId }}</span>
             </div>
           </div>
           <div class="card-row">
@@ -49,7 +49,8 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from "vue";
+  import router from "@/router";
+import { ref } from "vue";
   const props = defineProps({
     user: { type: Object, required: true },
     statistics: { type: Object, required: true },
@@ -59,7 +60,7 @@
   const defaultAvatar = "https://www.gravatar.com/avatar/?d=mp&s=300";
   
   function goto(type: 'buy' | 'sell' | 'fav' | 'myinfo') {
-    alert('跳转到“' + (type === 'buy' ? '买到的' : type === 'sell' ? '卖出的' : '收藏') + '”页面');
+    router.push("/UserCenter")
   }
   function onLogout() {
     emit("logout");

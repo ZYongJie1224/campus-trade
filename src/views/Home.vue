@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <Search />
-    <EasyCampusNavBar />
+    <!-- <EasyCampusNavBar /> -->
     <ShowcaseLayout />
     <div infinite-scroll-immediate="true" v-infinite-scroll="loadMore" infinite-scroll-delay="1000"
       :infinite-scroll-disabled="loading || !hasMore" :infinite-scroll-distance="50" class="goods-list">
