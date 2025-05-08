@@ -13,7 +13,7 @@
         <el-text class="good-title" truncated line-clamp="2">
           <!-- 小图不用触发 loaded -->
           <el-image class="is-home" :src="productMainImg || require('@/assets/logo.png')" />
-          {{ productTitle }}
+          <span v-html="productTitle"></span>
         </el-text>
       </div>
       <div class="tags">{{ categoryName }}</div>

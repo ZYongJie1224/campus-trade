@@ -24,7 +24,7 @@
 
   function onPost() {
     // 跳转到发闲置页面
-    alert('发闲置');
+    // alert('发闲置');
 
     // 可以用router.push('/post') 或弹窗
     router.push({ name: "PostProduct"});

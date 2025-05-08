@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import ProductDetail from '../views/ProductDetail.vue'
 import PostProduct from '../views/PostProduct.vue'
+import SearchResult from '../views/SearchResult.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -19,19 +20,35 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path:'/login',
-    name:'Login',
-    component :Login
+    path: '/login',
+    name: 'Login',
+    component: Login
   },
   {
-    path:'/ProductDetail/:id',
-    name:'ProductDetail',
-    component :ProductDetail
+    path: '/ProductDetail/:id',
+    name: 'ProductDetail',
+    component: ProductDetail
   },
   {
-    path:'/PostProduct',
-    name:'PostProduct',
-    component :PostProduct
+    path: '/PostProduct',
+    name: 'PostProduct',
+    component: PostProduct
+  },
+  { path: '/search', name: 'SearchResult', component: SearchResult },
+  {
+    path: '/orders',
+    name: 'OrderList',
+    component: () => import('@/views/OrderList.vue')
+  },
+  {
+    path: '/order/:orderId',
+    name: 'OrderDetail',
+    component: () => import('@/views/OrderDetail.vue')
+  },
+  {
+    path: '/UserCenter',
+    name: 'UserCenter',
+    component: () => import('@/views/UserCenter.vue')
   },
 
 ]

@@ -27,12 +27,13 @@
 </template>
 
 <script lang="ts" setup>
+
 import { getGoods } from "@/api/modules/goods/goods";
 import ProductCard from "@/components/Product/ProductCard/ProductCard.vue";
 import Search from "@/components/Search.vue";
 import EasyCampusNavBar from "@/components/Nav/EasyCampusNavBar.vue";
 import ShowcaseLayout from "@/components/Nav/ShowcaseLayout.vue";
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import type { ProductDetailVO } from "@/components/Product/ProductCard/config";
 import SkeletonCard from "@/components/Product/ProductCard/SkeletonCard.vue";
@@ -49,27 +50,37 @@ const page = ref(1);
 function goToDetail(productId: string | number) {
   router.push({ name: "ProductDetail", params: { id: productId } });
 }
+let lastId = 0;
+const pageSize = 20;
+
 const loadMore = async () => {
   if (loading.value || !hasMore.value) return;
   loading.value = true;
   try {
-    const res = await getGoods(page.value);
+    // 取最后一条商品的id，首次为0
+    if (goods.length > 0) {
+      lastId = goods[goods.length - 1].productId;
+      console.log('lastId:',lastId)
+    } else {
+      lastId = 0;
+    }
+    const res = await getGoods(lastId, pageSize);
     if (!res.data || res.data.length === 0) {
       hasMore.value = false;
       return;
     }
     goods.push(...res.data);
-    // 新增的卡片初始化为未加载（false）
     cardLoaded.value.push(...Array(res.data.length).fill(false));
-    page.value++;
   } catch (e) {
     hasMore.value = false;
     ElMessage.error('加载失败，请稍后重试');
   } finally {
-    console.log(cardLoaded);
     loading.value = false;
   }
 };
+onMounted(() => {
+  document.title = "易校园-首页"
+})
 </script>
 
 <style>
