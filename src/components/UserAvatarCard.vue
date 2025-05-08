@@ -18,8 +18,8 @@
             </div>
           </div>
           <div class="card-row">
-            <span>{{ statistics.fansCount }} 粉丝</span>
-            <span>{{ statistics.followCount }} 关注</span>
+            <span>{{ statistics.fans_count }} 粉丝</span>
+            <span>{{ statistics.follow_count }} 关注</span>
           </div>
           <div class="card-actions">
             <div class="action-row" @click="goto('buy')">
