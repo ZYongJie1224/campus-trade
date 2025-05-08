@@ -1,11 +1,11 @@
 import axios from "@/api/axios";
 
 //商品获取api
-export const getGoods = (data:any) => {
+export const getGoods = (lastId:number,pageSize : number) => {
     return axios({
       url: "/products/ProductsBatch",
       method: "get",
-      data
+      params : {lastId,pageSize}
     });
   };
 
@@ -34,4 +34,17 @@ export const getProductImgs = (id: number | string) => {
     url: `/product-imgs/${id}`,
     method: 'get'
   })
+}
+  export const searchProduct = (keyword:string,lastId:number,pageSize : number) => {
+    return axios({
+      url: "/products/search",
+      method: 'get',
+      params:{
+        keyword,
+        lastId,
+        pageSize
+      }
+    })
+
+
 }
