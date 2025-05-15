@@ -13,7 +13,7 @@
         :class="{ active: idx === currentImage }"
         @click="currentImage = idx"
       >
-        <img :src="img" />
+        <img :src="img" alt="商品图片" />
       </div>
     </aside>
 
@@ -22,6 +22,7 @@
       <img
         :src="images[currentImage]"
         class="main-media"
+        alt="主商品图片"
       />
       <div v-if="product.isSold" class="sold-banner">
         已卖出
@@ -30,15 +31,33 @@
 
     <!-- 右侧商品信息 -->
     <aside class="product-info">
-      <div class="price">
-        <span class="price-main">¥{{ product.price }}</span>
+      <div class="product-header">
+        <h1 class="product-title">{{ product.title || product.name }}</h1>
+        <div v-if="product.name && product.title" class="product-sub">
+          {{ product.name }}
+        </div>
+        <div v-if="product.tags && product.tags.length" class="product-tags">
+          <el-tag
+            v-for="(tag, idx) in product.tags"
+            :key="idx"
+            effect="light"
+            size="small"
+            style="margin-right: 8px;"
+          >{{ tag }}</el-tag>
+        </div>
+        <div class="product-meta">
+          发布：{{ formatDate(product.createTime) }}
+          <span class="meta-divider">|</span>
+          {{ product.wishCount || 0 }}人想要
+          <span class="meta-divider">|</span>
+          {{ product.viewCount || 0 }}浏览
+        </div>
       </div>
-      <div class="views">
-        {{ product.wishCount || 0 }}人想要 | {{ product.viewCount || 0 }}浏览
+      <div class="price-block">
+        <span class="price">¥{{ product.price }}</span>
       </div>
-      <div class="desc">
-        {{ product.productDescription }}
-      </div>
+      <div class="desc-title">商品描述</div>
+      <div class="desc">{{ product.productDescription }}</div>
       <div class="actions">
         <button
           class="buy"
@@ -97,10 +116,18 @@ const isFavorited = ref(false)
 const buyDialogVisible = ref(false)
 const addressInput = ref('')
 
+// 日期格式化
+function formatDate(dateStr: string) {
+  if (!dateStr) return ''
+  return dateStr.slice(0, 10)
+}
+
 const fetchDetail = async () => {
   const res = await getProductDetail(productId)
   if (res.data && res.code === 200) {
     product.value = res.data
+    // 兼容后端tags为null或字符串数组
+    if (!Array.isArray(product.value.tags)) product.value.tags = []
     images.value = []
     if (product.value.mainImageUrl) images.value.push(product.value.mainImageUrl)
     const imgRes = await getProductImgs(productId)
@@ -141,7 +168,6 @@ async function submitOrder() {
       ElMessage.success('下单成功！')
       buyDialogVisible.value = false
       addressInput.value = ''
-      // 跳转到订单详情页，携带订单号
       router.push({ name: 'OrderDetail', params: { orderId: res.data.orderId } })
     } else if (res.code === 401) {
       ElMessage.warning('请先登录')
@@ -195,23 +221,27 @@ async function onUnfavClick() {
   position: relative;
 }
 .media-list {
-  width: 100px;
+  width: 110px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-right: 32px;
+  align-items: center;
 }
 .thumb {
   border: 2px solid transparent;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
   width: 80px;
   height: 80px;
-  background: #f4f4f4;
+  background: #f7f7f7;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(150,150,150,0.05);
 }
 .thumb.active {
-  border-color: #ffe600;
+  border-color: #5b84f9;
+  box-shadow: 0 2px 8px rgba(91,132,249,0.12);
 }
 .thumb img {
   width: 100%;
@@ -226,11 +256,12 @@ async function onUnfavClick() {
   position: relative;
 }
 .main-media {
-  width: 400px;
-  height: 500px;
+  width: 420px;
+  height: 540px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 14px;
   background: #eee;
+  box-shadow: 0 2px 18px #f1f2f9;
 }
 .sold-banner {
   position: absolute;
@@ -239,11 +270,12 @@ async function onUnfavClick() {
   transform: translate(-50%, -50%);
   background: rgba(50,50,50,0.8);
   color: #fff;
-  padding: 20px 60px;
-  font-size: 36px;
+  padding: 22px 68px;
+  font-size: 38px;
   font-weight: bold;
-  border-radius: 16px;
+  border-radius: 18px;
   pointer-events: none;
+  letter-spacing: 2px;
 }
 .product-info {
   flex: 1;
@@ -251,52 +283,95 @@ async function onUnfavClick() {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  min-width: 350px;
+  min-width: 390px;
+  max-width: 500px;
+}
+.product-header {
+  margin-bottom: 22px;
+}
+.product-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #23263b;
+  margin-bottom: 6px;
+  line-height: 1.25;
+  word-break: break-all;
+}
+.product-sub {
+  font-size: 18px;
+  color: #5b6a91;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.product-tags {
+  margin-bottom: 8px;
+}
+.product-meta {
+  font-size: 14px;
+  color: #a6adc8;
+  margin-bottom: 8px;
+}
+.meta-divider {
+  margin: 0 8px;
+  color: #e0e0e0;
+}
+.price-block {
+  margin-bottom: 18px;
 }
 .price {
-  font-size: 32px;
+  color: #ff7a00;
+  font-size: 36px;
   font-weight: bold;
-  color: #f60;
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
+  letter-spacing: 1px;
 }
-.views {
-  color: #999;
-  margin: 12px 0;
+.desc-title {
+  font-size: 16px;
+  color: #7a7a7a;
+  margin-bottom: 4px;
+  font-weight: 500;
 }
 .desc {
-  font-size: 18px;
-  color: #333;
-  margin: 16px 0 24px 0;
+  font-size: 16px;
+  color: #3a3a3a;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  word-break: break-all;
 }
 .actions {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   margin-top: 12px;
   align-items: center;
 }
 .actions button {
   border: none;
   border-radius: 22px;
-  padding: 12px 32px;
+  padding: 12px 40px;
   font-size: 18px;
+  font-weight: 500;
   cursor: pointer;
   transition: 0.1s;
 }
 .actions .buy {
-  background: #333;
+  background: #23263b;
   color: #fff;
+  box-shadow: 0 2px 6px #e8eafd;
+}
+.actions .buy:active {
+  background: #3a3d5c;
 }
 .actions .fav {
   background: #fff;
-  color: #333;
-  border: 1px solid #eee;
+  color: #23263b;
+  border: 1px solid #e0e0e0;
+}
+.actions .fav:active {
+  background: #f5f6fa;
 }
 .actions .unfav {
-  background: #fafafa;
+  background: #f4f5fa;
   color: #888;
-  border: 1px solid #eee;
+  border: 1px solid #e0e0e0;
 }
 .sold-tip {
   color: #888;

@@ -4,6 +4,7 @@ import Login from '../views/Login.vue'
 import ProductDetail from '../views/ProductDetail.vue'
 import PostProduct from '../views/PostProduct.vue'
 import SearchResult from '../views/SearchResult.vue'
+import CategoryView from '@/views/CategoryView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -49,6 +50,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/UserCenter',
     name: 'UserCenter',
     component: () => import('@/views/UserCenter.vue')
+  },
+  {
+    path: '/category/:categoryId',
+    name: 'CategoryView',
+    component: () => import('@/views/CategoryView.vue')
   },
 
 

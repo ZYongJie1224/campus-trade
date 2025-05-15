@@ -57,7 +57,7 @@
   <script setup lang="ts">
   import { ref, reactive, onMounted } from 'vue'
   import { ElMessage } from 'element-plus'
-  import { getUserProfile, updateUserProfile, uploadUserAvatar, getUserStats } from '@/api/modules/user/user'
+  import { getUserProfile, updateUserProfile, uploadUserAvatar, getUserStats, getMe } from '@/api/modules/user/user'
   
   const defaultAvatar = 'https://img.yzcdn.cn/vant/cat.jpeg'
   
@@ -147,6 +147,13 @@
     const res = await uploadUserAvatar(formData)
     if (res.code === 200) {
       ElMessage.success('头像更新成功')
+            const meRes = await getMe();
+      if (meRes.data && meRes.code === 200) {
+        console.log(meRes.code)
+        localStorage.setItem('user', JSON.stringify(meRes.data.user));
+        localStorage.setItem('user_statistics', JSON.stringify(meRes.data.statistics));
+        window.location.reload();
+      }
       fetchProfile()
     } else {
       ElMessage.error(res.message || '头像上传失败')

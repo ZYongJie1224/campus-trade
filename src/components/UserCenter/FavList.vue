@@ -67,10 +67,10 @@
     loading.value = true
     page.value = newPage
     try {
-      const res = await getFavoriteList(page.value, pageSize.value)
+      const res = await getFavoriteList()
       if (res.code === 200) {
         favorites.value = res.data.records
-        total.value = res.data.total
+        total.value = res.data.size
       } else if (res.code === 401) {
         ElMessage.warning('请先登录')
         favorites.value = []

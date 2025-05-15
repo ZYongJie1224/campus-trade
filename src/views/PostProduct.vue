@@ -362,7 +362,7 @@ async function handleSubmit() {
 </script>
 <style scoped>
 .upload-bg {
-  background: #eaf1fd;
+  /* background: #eaf1fd; */
   min-height: 100vh;
 }
 .upload-container {
@@ -374,7 +374,7 @@ async function handleSubmit() {
 .upload-card {
   background: #fff;
   border-radius: 22px;
-  box-shadow: 0 4px 32px 0 rgba(60, 100, 180, 0.07);
+  box-shadow: 32px 32px 32px 32px rgba(60, 100, 180, 0.07);
   padding: 60px 64px 32px 64px;
   width: 1200px;
   display: flex;
@@ -530,7 +530,7 @@ async function handleSubmit() {
   border: none;
   border-radius: 8px;
   background: #f5f8ff;
-  color: #1d308f;
+  /* color: #1d308f; */
   padding: 14px 18px;
   font-size: 19px;
   font-family: inherit;

@@ -1,7 +1,7 @@
 <template>
   <header class="easycampus-header">
     <div class="header-inner">
-      <div class="logo">易校园</div>
+      <div class="logo" @click="backhome">校园集市</div>
       <div class="search-area-outer">
         <div class="search-area">
           <input v-model="searchText" class="search-input" placeholder="请输入你想要的内容" @keyup.enter="onSearch" />
@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="user-action">
-        <UserAvatarCard v-if="user" :user="user" :statistics="statistics" @logout="onLogout"   />
+        <UserAvatarCard v-if="user" :user="user" :statistics="statistics" @logout="onLogout" @goto="goto" />
         <template v-else>
           <span class="action-item" @click="showLogin = true">
             <svg class="user-icon" viewBox="0 0 24 24" fill="none">
@@ -64,11 +64,17 @@ const user = ref<any>(null);
 const statistics = ref<any>(null);
 const router = useRouter();
 
-function userCenter(){
+function backhome() {
+  router.push({ path: "/" });
+}
+
+function goto(type: string) {
+  router.push({ path: "/UserCenter", query: { menu: type } });
+}
+function userCenter() {
   router.push("/UserCenter")
 }
 function onRegisterSuccess() {
-  // 注册成功后可自动关闭弹窗并弹出登录框或自动登录
   showRegister.value = false;
   showLogin.value = true;
 }
@@ -86,60 +92,33 @@ function onSearch() {
   }
   router.push({ path: "/search", query: { keyword: searchText.value.trim() } });
 }
-
 function onLoginSuccess() {
-  // 假设登录后你会存 user/user_statistics 到localStorage
-  // 这里模拟一下数据
-
   const userStr = localStorage.getItem('user');
   const statStr = localStorage.getItem('user_statistics');
-
   user.value = userStr ? JSON.parse(userStr) : null;
   statistics.value = statStr ? JSON.parse(statStr) : null;
-  // console.log(user.followCount)
   showLogin.value = false;
-
-  // user.value = {
-  //   user_id: 1,
-  //   nickname: "ZyongJieA",
-  //   avatar_url: "https://q1.qlogo.cn/g?b=qq&nk=2290031983&s=100",
-  //   fans_count: 6,
-  //   follow_count: 0,
-  // };
-  // statistics.value = {
-  //   buyCount: 13,
-  //   sellCount: 25,
-  //   favCount: 9,
-  // };
-  // 真实项目可在这里 localStorage.setItem('user', JSON.stringify(...));
 }
-
 function onLoginCancel() { }
-
 function onLogout() {
   user.value = null;
   statistics.value = null;
   localStorage.removeItem("user");
   localStorage.removeItem("user_statistics");
   localStorage.removeItem("token");
-  // 真实项目应清除localStorage
 }
-
 onMounted(() => {
-  // 页面刷新时自动读取本地登录状态
   try {
     const userStr = localStorage.getItem('user');
     const statStr = localStorage.getItem('user_statistics');
-
     user.value = userStr ? JSON.parse(userStr) : null;
     statistics.value = statStr ? JSON.parse(statStr) : null;
-    // console.log(user.fansCount)
   } catch (e) { }
 });
 </script>
 
 <style scoped>
-/* 原样式不变，见你上一条 */
+/* 保持原样式 */
 .easycampus-header {
   min-width: 99vw;
   background: #eaf3ff;
@@ -281,12 +260,14 @@ onMounted(() => {
   color: #1a307d;
   background: #e0eaff;
 }
-.register-icon{
+
+.register-icon {
   width: 18px;
   height: 18px;
   stroke: #2446a6;
   margin-right: 2px;
 }
+
 .user-icon,
 .order-icon {
   width: 18px;

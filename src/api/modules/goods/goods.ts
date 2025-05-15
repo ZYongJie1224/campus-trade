@@ -45,6 +45,12 @@ export const getProductImgs = (id: number | string) => {
         pageSize
       }
     })
-
-
+    
 }
+export const getGoodsByCategoryId = (lastId:number,pageSize : number,categoryId : number) => {
+  return axios({
+    url: "/products/ProductsBatchByCategoryId",
+    method: "get",
+    params : {lastId,pageSize,categoryId}
+  });
+};

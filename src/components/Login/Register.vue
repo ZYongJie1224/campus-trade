@@ -80,9 +80,9 @@
         <div class="register-right">
           <div class="qr-title">扫码快速注册</div>
           <div class="qr-area">
-            <img class="qr-img" src="/static/qr-demo.png" alt="注册二维码" />
+            <img class="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.taobao.com" alt="二维码" />
           </div>
-          <div class="qr-tip">使用易校园APP扫码注册</div>
+          <div class="qr-tip">使用校园集市APP扫码注册</div>
         </div>
       </div>
     </el-dialog>

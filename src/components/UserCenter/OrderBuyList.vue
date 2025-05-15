@@ -21,7 +21,7 @@ async function fetchOrders(newPage = 1) {
   page.value = newPage
   try {
     // 调用实际后端接口，传递tab、分页信息
-    const res = await getBuyOrders(props.tab, page.value, pageSize.value)
+    const res = await getBuyOrders(props.tab)
     if (res.code === 200) {
       orders.value = res.data.records || res.data.list || []
       total.value = res.data.total || 0

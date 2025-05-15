@@ -89,7 +89,7 @@
           <div class="qr-area">
             <img class="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.taobao.com" alt="二维码" />
           </div>
-          <div class="qr-tip">打开闲鱼APP扫码</div>
+          <div class="qr-tip">打开校园集市APP扫码</div>
         </div>
       </div>
     </el-dialog>

@@ -36,9 +36,14 @@ import ShowcaseLayout from "@/components/Nav/ShowcaseLayout.vue";
 import { onMounted, reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import type { ProductDetailVO } from "@/components/Product/ProductCard/config";
+import { getGoodsByCategoryId } from "@/api/modules/goods/goods";
 import SkeletonCard from "@/components/Product/ProductCard/SkeletonCard.vue";
 import router from "@/router";
 import SideBarButtons from "@/components/Nav/SideBarButtons.vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute()
+const categoryId = route.params.categoryId as unknown as number
 
 const goods = reactive<ProductDetailVO[]>([]);
 // 新增：每个卡片的图片加载状态（下标与goods对应）
@@ -64,7 +69,7 @@ const loadMore = async () => {
     } else {
       lastId = 0;
     }
-    const res = await getGoods(lastId, pageSize);
+    const res = await getGoodsByCategoryId(lastId, pageSize,categoryId);
     if (!res.data || res.data.length === 0) {
       hasMore.value = false;
       return;

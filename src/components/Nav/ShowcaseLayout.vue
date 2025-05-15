@@ -1,10 +1,13 @@
-```vue
 <template>
   <div class="showcase-layout">
     <!-- 左侧导航（动态获取分类，只显示前8项） -->
     <aside class="category-nav">
       <ul>
-        <li v-for="c in categories" :key="c.navId">
+        <li
+          v-for="c in categories"
+          :key="c.navId"
+          @click="onCategoryClick(c)"
+        >
           <span class="cat-icon">
             <i :class="c.navIcon"></i>
           </span>
@@ -19,12 +22,12 @@
         <div class="promo-card">
           <div class="promo-inner">
             <div class="promo-title">
-              闲鱼抄底好物<br />
+              校园抄底好物<br />
               <span class="promo-yellow">
                 超绝性价比 <span class="promo-badge">1</span> 省到底
               </span>
             </div>
-            <button class="promo-btn">去看看 &gt;</button>
+            <!-- <button class="promo-btn">去看看 &gt;</button> -->
           </div>
         </div>
         <!-- 右侧宫格区块 -->
@@ -38,8 +41,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import ShowcaseCard from './ShowcaseCard.vue'
-// 假设你有这个API方法，返回后端分类
 import { fetchCategoryNavigation } from '@/api/modules/nav/navigation'
 
 interface CategoryNav {
@@ -53,10 +56,10 @@ interface CategoryNav {
 }
 
 const categories = ref<CategoryNav[]>([])
+const router = useRouter()
 
 onMounted(async () => {
   try {
-    // 推荐这样写，兼容 { data: [...] } 或直接返回数组
     const res = await fetchCategoryNavigation()
     const list = Array.isArray(res) ? res : res?.data
     categories.value = Array.isArray(list)
@@ -66,17 +69,25 @@ onMounted(async () => {
       : []
   } catch (e) {
     console.log(e)
-    // 兜底静态数据
     categories.value = [
-      { navId: 1, navName: "手机 / 数码 / 电脑", navIcon: "i-campus-mobile", navRoute: "", parentId: 0, orderIndex: 1, isActive: true },
-      { navId: 2, navName: "服饰 / 箱包 / 运动", navIcon: "i-campus-clothes", navRoute: "", parentId: 0, orderIndex: 2, isActive: true },
-      { navId: 3, navName: "技能 / 卡券 / 潮玩", navIcon: "i-campus-coupon", navRoute: "", parentId: 0, orderIndex: 3, isActive: true },
-      { navId: 4, navName: "礼品 / 文玩 / 珠宝", navIcon: "i-campus-toy", navRoute: "", parentId: 0, orderIndex: 4, isActive: true },
-      { navId: 6, navName: "11 / 美妆 / 个护", navIcon: "i-campus-baby", navRoute: "", parentId: 0, orderIndex: 6, isActive: true },
-      { navId: 8, navName: "图书 / 游戏 / 音像", navIcon: "i-campus-book", navRoute: "", parentId: 0, orderIndex: 8, isActive: true }
+      { navId: 1, navName: "手机 / 数码 / 电脑", navIcon: "i-campus-mobile", navRoute: "/category/1", parentId: 0, orderIndex: 1, isActive: true },
+      { navId: 2, navName: "服饰 / 箱包 / 运动", navIcon: "i-campus-clothes", navRoute: "/category/2", parentId: 0, orderIndex: 2, isActive: true },
+      { navId: 3, navName: "技能 / 卡券 / 潮玩", navIcon: "i-campus-coupon", navRoute: "/category/3", parentId: 0, orderIndex: 3, isActive: true },
+      { navId: 4, navName: "礼品 / 文玩 / 珠宝", navIcon: "i-campus-toy", navRoute: "/category/4", parentId: 0, orderIndex: 4, isActive: true },
+      { navId: 6, navName: "11 / 美妆 / 个护", navIcon: "i-campus-baby", navRoute: "/category/6", parentId: 0, orderIndex: 6, isActive: true },
+      { navId: 8, navName: "图书 / 游戏 / 音像", navIcon: "i-campus-book", navRoute: "/category/8", parentId: 0, orderIndex: 8, isActive: true }
     ]
   }
 })
+
+function onCategoryClick(category: CategoryNav) {
+  if (category.navRoute) {
+    router.push({ name: 'CategoryView', params: { categoryId: category.navId } })
+  } else {
+    // 默认跳转，可根据实际需求修改
+    router.push({ name: 'CategoryView', params: { categoryId: category.navId } })
+  }
+}
 
 const cards = [
   {
@@ -310,4 +321,3 @@ const cards = [
   align-items: stretch;
 }
 </style>
-```
